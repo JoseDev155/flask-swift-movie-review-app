@@ -3,11 +3,36 @@ import 'package:get_it/get_it.dart';
 
 import '../models/app_config.dart';
 import '../models/movie.dart';
+import '../services/api_exception.dart';
+import '../services/favorite_service.dart';
 
 class MovieDetailPage extends StatelessWidget {
   const MovieDetailPage({super.key, required this.movie});
 
   final Movie movie;
+
+  Future<void> _addFavorite(BuildContext context) async {
+    final favoriteService = GetIt.instance.get<FavoriteService>();
+
+    try {
+      await favoriteService.addFavorite(movie);
+      if (!context.mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Añadida a favoritos')),
+      );
+    } on ApiException catch (error) {
+      if (!context.mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.message)),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,6 +161,20 @@ class MovieDetailPage extends StatelessWidget {
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: () => _addFavorite(context),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: const Color(0xFF8C7CFF),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      icon: const Icon(Icons.favorite_border),
+                      label: const Text('Añadir a favoritos'),
                     ),
                   ),
                 ],

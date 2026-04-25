@@ -9,6 +9,7 @@ import 'package:get_it/get_it.dart';
 import '../models/app_config.dart';
 import '../models/movie.dart';
 import '../models/movie_page.dart';
+import '../services/auth_service.dart';
 import '../services/movie_service.dart';
 
 class MainPage extends StatefulWidget {
@@ -22,6 +23,7 @@ class _MainPageState extends State<MainPage> {
   static const List<String> _categories = ['Popular', 'Upcoming'];
 
   final MovieService _movieService = GetIt.instance.get<MovieService>();
+  final AuthService _authService = GetIt.instance.get<AuthService>();
   final AppConfig _config = GetIt.instance.get<AppConfig>();
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -181,6 +183,19 @@ class _MainPageState extends State<MainPage> {
     context.push('/movie', extra: movie);
   }
 
+  void _openFavorites() {
+    context.push('/favorites');
+  }
+
+  Future<void> _logout() async {
+    await _authService.logout();
+    if (!mounted) {
+      return;
+    }
+
+    context.go('/login');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -284,6 +299,17 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
           const SizedBox(width: 12),
+          IconButton(
+            onPressed: _openFavorites,
+            icon: const Icon(Icons.favorite_border, color: Colors.white70),
+            tooltip: 'Favorites',
+          ),
+          IconButton(
+            onPressed: _logout,
+            icon: const Icon(Icons.logout, color: Colors.white70),
+            tooltip: 'Logout',
+          ),
+          const SizedBox(width: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(

@@ -15,16 +15,16 @@ class MovieService {
   }
 
   Future<MoviePage> getPopularMovies({int page = 1}) async {
-    return _getMovies('/movie/popular', query: {'page': page});
+    return _getMovies('/movies/popular', query: {'page': page});
   }
 
   Future<MoviePage> getUpcomingMovies({int page = 1}) async {
-    return _getMovies('/movie/upcoming', query: {'page': page});
+    return _getMovies('/movies/upcoming', query: {'page': page});
   }
 
   Future<MoviePage> searchMovies(String searchTerm, {int page = 1}) async {
     return _getMovies(
-      '/search/movie',
+      '/movies/search',
       query: {
         'query': searchTerm,
         'page': page,

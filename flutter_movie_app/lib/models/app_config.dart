@@ -1,11 +1,11 @@
 class AppConfig {
   final String baseApiUrl;
   final String baseImageUrl;
-  final String apiKey;
+  final String? apiKey;
 
   const AppConfig({
     required this.baseApiUrl,
     required this.baseImageUrl,
-    required this.apiKey,
+    this.apiKey,
   });
 }

@@ -1,6 +1,9 @@
 // Packages
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+
+import '../services/auth_service.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -15,7 +18,8 @@ class _SplashPageState extends State<SplashPage> {
     super.initState();
     Future.delayed(const Duration(seconds: 1), () {
       if (mounted) {
-        context.go('/home');
+        final authService = GetIt.instance.get<AuthService>();
+        context.go(authService.hasSession ? '/home' : '/login');
       }
     });
   }

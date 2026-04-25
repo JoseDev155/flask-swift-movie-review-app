@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'models/movie.dart';
+import 'pages/favorites_page.dart';
+import 'pages/login_page.dart';
 import 'pages/movie_detail_page.dart';
+import 'pages/register_page.dart';
 import 'pages/splash_page.dart';
 import 'pages/main_page.dart';
 
@@ -17,6 +20,21 @@ final GoRouter appRouter = GoRouter(
       path: '/home',
       name: 'home',
       builder: (context, state) => const MainPage(),
+    ),
+    GoRoute(
+      path: '/login',
+      name: 'login',
+      builder: (context, state) => const LoginPage(),
+    ),
+    GoRoute(
+      path: '/register',
+      name: 'register',
+      builder: (context, state) => const RegisterPage(),
+    ),
+    GoRoute(
+      path: '/favorites',
+      name: 'favorites',
+      builder: (context, state) => const FavoritesPage(),
     ),
     GoRoute(
       path: '/movie',

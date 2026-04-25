@@ -1,5 +1,6 @@
 class Movie {
   final int id;
+  final int? backendId;
   final String title;
   final String language;
   final bool isAdult;
@@ -11,6 +12,7 @@ class Movie {
 
   const Movie({
     required this.id,
+    this.backendId,
     required this.title,
     required this.language,
     required this.isAdult,
@@ -22,8 +24,12 @@ class Movie {
   });
 
   factory Movie.fromJson(Map<String, dynamic> json) {
+    final apiId = (json['api_id'] as num?)?.toInt();
+    final rawId = (json['id'] as num?)?.toInt() ?? 0;
+
     return Movie(
-      id: (json['id'] as num?)?.toInt() ?? 0,
+      id: apiId ?? rawId,
+      backendId: apiId != null ? rawId : null,
       title: (json['title'] as String?) ?? (json['name'] as String?) ?? 'Untitled',
       language: (json['original_language'] as String?) ?? 'en',
       isAdult: (json['adult'] as bool?) ?? false,
