@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from dotenv import load_dotenv
+from flask_cors import CORS
 
 # Cargar variables de entorno lo antes posible
 load_dotenv()
@@ -18,6 +19,13 @@ from routes import auth_bp, movie_bp, favorite_bp, user_bp
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+
+    CORS(
+        app,
+        resources={r"/api/*": {"origins": "*"}},
+        allow_headers=["Content-Type", "Authorization"],
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    )
 
     # Inicializar extensiones
     db.init_app(app)

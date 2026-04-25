@@ -3,6 +3,9 @@ import os
 class Config:
     _SECRET_KEY = os.environ.get('SECRET_KEY')
     _JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
+    _TMDB_API_KEY = os.environ.get('TMDB_API_KEY')
+    _TMDB_BASE_URL = os.environ.get('TMDB_BASE_URL')
+    _TMDB_LANGUAGE = os.environ.get('TMDB_LANGUAGE')
     _DB_USER = os.environ.get('DB_USER')
     _DB_PASSWORD = os.environ.get('DB_PASSWORD')
     _DB_HOST = os.environ.get('DB_HOST')
@@ -19,6 +22,9 @@ class Config:
 
     SECRET_KEY = _SECRET_KEY
     JWT_SECRET_KEY = _JWT_SECRET_KEY
+    TMDB_API_KEY = _TMDB_API_KEY
+    TMDB_BASE_URL = _TMDB_BASE_URL
+    TMDB_LANGUAGE = _TMDB_LANGUAGE
 
     # Configuración básica para flask-smorest (OpenAPI)
     API_TITLE = 'Movie Review API'

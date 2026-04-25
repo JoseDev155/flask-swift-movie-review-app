@@ -26,3 +26,12 @@ class UserService:
             db.session.commit()
             
         return {"message": "Perfil actualizado exitosamente", "usuario": usuario_schema.dump(user)}, 200
+
+    @staticmethod
+    def delete_account(user_id: int):
+        user = UserRepository.get_by_id(user_id)
+        if not user:
+            return {"error": "Usuario no encontrado"}, 404
+
+        UserRepository.delete(user)
+        return {"message": "Cuenta eliminada exitosamente"}, 200
