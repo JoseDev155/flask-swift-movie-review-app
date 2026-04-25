@@ -1,7 +1,11 @@
 class AppConfig {
-  final String BASE_API_URL;
-  final String BASE_IMAGE_URL;
-  final String API_KEY;
+  final String baseApiUrl;
+  final String baseImageUrl;
+  final String apiKey;
 
-  AppConfig({this.BASE_API_URL, this.BASE_IMAGE_URL, this.API_KEY,});
+  const AppConfig({
+    required this.baseApiUrl,
+    required this.baseImageUrl,
+    required this.apiKey,
+  });
 }

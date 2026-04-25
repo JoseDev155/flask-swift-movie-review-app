@@ -1,36 +1,42 @@
 import '../models/app_config.dart';
 
 // Packages
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
 class HTTPService {
-  final Dio dio = new Dio();
+  final Dio dio = Dio();
   final GetIt getIt = GetIt.instance;
 
-  String _base_url;
-  String _api_key;
+  late final String baseUrl;
+  late final String apiKey;
 
   HTTPService() {
-    AppConfig _config = getIt.get<AppConfig>();
-    _base_url = _config.BASE_API_URL;
-    _api_key = _config.API_KEY;
+    final config = getIt.get<AppConfig>();
+    baseUrl = config.baseApiUrl;
+    apiKey = config.apiKey;
   }
 
-  Future<Response> get(String _path, Map<String, dynamic> query) async {
+  Future<Response<dynamic>> get(
+    String path, {
+    Map<String, dynamic>? query,
+  }) async {
     try {
-      String _url = '$_base_url$_path';
-      Map<String, dynamic> _query = {
-        'api_key': _api_key,
+      final url = '$baseUrl$path';
+      final requestQuery = <String, dynamic>{
+        'api_key': apiKey,
         'language': 'en-US',
       };
+
       if (query != null) {
-        _query.addAll(query);
+        requestQuery.addAll(query);
       }
-      return await dio.get(_url, queryParameters: _query);
-    } on DioError catch (e) {
-      print('Unable to perform get request.');
-      print('DioError:$e');
+      return await dio.get(url, queryParameters: requestQuery);
+    } on DioException catch (e) {
+      debugPrint('Unable to perform get request.');
+      debugPrint('DioException: $e');
+      rethrow;
     }
   }
 }
