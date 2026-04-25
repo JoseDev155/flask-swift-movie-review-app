@@ -39,3 +39,41 @@ class MovieService:
         if not movie:
             return {"error": "Película no encontrada"}, 404
         return {"pelicula": pelicula_schema.dump(movie)}, 200
+
+    @staticmethod
+    def update_movie(api_id: int, data: dict):
+        movie = MovieRepository.get_by_api_id(api_id)
+        if not movie:
+            return {"error": "Película no encontrada"}, 404
+
+        if not isinstance(data, dict):
+            return {"error": "El cuerpo de la solicitud debe ser un objeto JSON"}, 400
+
+        title = data.get('title')
+        poster_path = data.get('poster_path')
+        overview = data.get('overview')
+        release_date = data.get('release_date')
+
+        if title is not None and not str(title).strip():
+            return {"error": "El campo title no puede estar vacío"}, 400
+
+        if all(value is None for value in (title, poster_path, overview, release_date)):
+            return {"error": "No se enviaron campos para actualizar"}, 400
+
+        updated_movie = MovieRepository.update(
+            movie,
+            title=title,
+            poster_path=poster_path,
+            overview=overview,
+            release_date=release_date
+        )
+        return {"message": "Película actualizada exitosamente", "pelicula": pelicula_schema.dump(updated_movie)}, 200
+
+    @staticmethod
+    def delete_movie(api_id: int):
+        movie = MovieRepository.get_by_api_id(api_id)
+        if not movie:
+            return {"error": "Película no encontrada"}, 404
+
+        MovieRepository.delete(movie)
+        return {"message": "Película eliminada exitosamente"}, 200

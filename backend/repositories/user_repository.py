@@ -20,3 +20,8 @@ class UserRepository:
         db.session.add(new_user)
         db.session.commit()
         return new_user
+
+    @staticmethod
+    def delete(user: Usuario):
+        db.session.delete(user)
+        db.session.commit()

@@ -17,3 +17,10 @@ def update_profile():
     data = request.get_json()
     response, status = UserService.update_profile(int(user_id), data)
     return response, status
+
+@user_bp.route('/profile', methods=['DELETE'])
+@jwt_required()
+def delete_profile():
+    user_id = get_jwt_identity()
+    response, status = UserService.delete_account(int(user_id))
+    return response, status
