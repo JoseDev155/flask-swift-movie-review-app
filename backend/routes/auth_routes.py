@@ -15,6 +15,12 @@ def login():
     response, status = AuthService.login_user(data)
     return response, status
 
+@auth_bp.route('/recover', methods=['POST'])
+def recover():
+    # Swift app sends {"email": "..."}
+    # Stub response to satisfy the frontend since we don't have email sending logic yet.
+    return {"success": True, "message": "Si el correo existe, se han enviado las instrucciones"}, 200
+
 @auth_bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():

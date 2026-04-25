@@ -166,3 +166,22 @@ class MovieService:
 
         MovieRepository.delete(movie)
         return {"message": "Película eliminada exitosamente"}, 200
+
+    @staticmethod
+    def format_swift_movies(payload):
+        # Transforma la respuesta de TMDb al esquema MovieResponse esperado por Swift
+        results = payload.get('results', []) if isinstance(payload, dict) else []
+        swift_movies = []
+        for movie_data in results:
+            if not isinstance(movie_data, dict):
+                continue
+            poster_path = movie_data.get('poster_path')
+            poster_url = f"https://image.tmdb.org/t/p/w500{poster_path}" if poster_path else ""
+            swift_movies.append({
+                "id": str(movie_data.get('id', '')),
+                "title": movie_data.get('title') or movie_data.get('name') or "",
+                "poster_url": poster_url,
+                "quality": "HD" # Valor por defecto ya que TMDb no provee calidad
+            })
+        return swift_movies
+

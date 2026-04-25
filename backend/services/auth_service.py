@@ -5,12 +5,13 @@ from flask_jwt_extended.exceptions import RevokedTokenError
 class AuthService:
     @staticmethod
     def register_user(data: dict):
-        username = data.get('username')
+        # Swift envía 'nombre' en lugar de 'username'
+        username = data.get('nombre') or data.get('username')
         email = data.get('email')
         password = data.get('password')
 
         if not username or not email or not password:
-            return {"error": "Faltan datos requeridos (username, email, password)"}, 400
+            return {"error": "Faltan datos requeridos (nombre, email, password)"}, 400
 
         if UserRepository.get_by_username(username):
             return {"error": "El nombre de usuario ya está en uso"}, 400
@@ -21,27 +22,31 @@ class AuthService:
         hashed_password = hash_password(password)
         new_user = UserRepository.create(username, email, hashed_password)
         
-        return {"message": "Usuario registrado exitosamente", "usuario_id": new_user.id}, 201
+        # Swift espera {"success": true, "message": "..."}
+        return {"success": True, "message": "Usuario registrado exitosamente"}, 200
 
     @staticmethod
     def login_user(data: dict):
-        username = data.get('username')
+        # Swift envía 'email' en lugar de 'username'
+        email = data.get('email')
         password = data.get('password')
 
-        if not username or not password:
-            return {"error": "Faltan datos requeridos (username, password)"}, 400
+        if not email or not password:
+            return {"error": "Faltan datos requeridos (email, password)"}, 400
 
-        user = UserRepository.get_by_username(username)
+        user = UserRepository.get_by_email(email)
         if not user or not verify_password(user.password_hash, password):
             return {"error": "Credenciales inválidas"}, 401
 
         tokens = generate_tokens(identity=str(user.id))
         TokenRepository.save(tokens['refresh_token'], user.id)
 
+        # Swift espera {"token": "...", "refresh_token": "...", "user_name": "...", "email": "..."}
         return {
-            "message": "Login exitoso",
-            "access_token": tokens['access_token'],
-            "refresh_token": tokens['refresh_token']
+            "token": tokens['access_token'],
+            "refresh_token": tokens['refresh_token'],
+            "user_name": user.username,
+            "email": user.email
         }, 200
 
     @staticmethod

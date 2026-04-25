@@ -5,8 +5,27 @@ from flask_jwt_extended import jwt_required
 
 @movie_bp.route('/', methods=['GET'])
 def get_movies():
-    response, status = MovieService.get_all_movies()
-    return response, status
+    category = request.args.get('category')
+    page = request.args.get('page', default=1, type=int)
+
+    if category == 'popular':
+        payload, status = MovieService.get_popular_movies(page=page)
+    elif category == 'upcoming':
+        payload, status = MovieService.get_upcoming_movies(page=page)
+    elif category:
+        # Fallback para otras categorías que Swift pueda enviar
+        payload, status = MovieService.get_popular_movies(page=page)
+    else:
+        # Comportamiento original si no hay categoría
+        response, status = MovieService.get_all_movies()
+        return response, status
+
+    if status != 200:
+        return payload, status
+
+    # Formatear a la lista exacta que espera Swift
+    swift_movies = MovieService.format_swift_movies(payload)
+    return swift_movies, 200
 
 @movie_bp.route('/popular', methods=['GET'])
 def get_popular_movies():
