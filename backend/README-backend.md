@@ -29,5 +29,5 @@ pip install -r requirements.txt
 
 ```bash
 cd backend
-python app.py
+python main.py
 ```
