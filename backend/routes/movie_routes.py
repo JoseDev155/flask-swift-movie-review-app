@@ -8,6 +8,25 @@ def get_movies():
     response, status = MovieService.get_all_movies()
     return response, status
 
+@movie_bp.route('/popular', methods=['GET'])
+def get_popular_movies():
+    page = request.args.get('page', default=1, type=int)
+    response, status = MovieService.get_popular_movies(page=page)
+    return response, status
+
+@movie_bp.route('/upcoming', methods=['GET'])
+def get_upcoming_movies():
+    page = request.args.get('page', default=1, type=int)
+    response, status = MovieService.get_upcoming_movies(page=page)
+    return response, status
+
+@movie_bp.route('/search', methods=['GET'])
+def search_movies():
+    page = request.args.get('page', default=1, type=int)
+    query = request.args.get('query', default='', type=str)
+    response, status = MovieService.search_movies(query, page=page)
+    return response, status
+
 @movie_bp.route('/', methods=['POST'])
 @jwt_required()
 def add_movie():

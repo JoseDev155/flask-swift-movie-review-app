@@ -1,28 +1,29 @@
 from repositories import FavoriteRepository, UserRepository, MovieRepository
 from models import favoritos_schema, favorito_schema
+from services import MovieService
 
 class FavoriteService:
     @staticmethod
     def add_favorite(user_id: int, data: dict):
-        pelicula_id = data.get('pelicula_id')
+        pelicula_id = data.get('pelicula_id') or data.get('api_id')
+        pelicula_data = data.get('pelicula') or data.get('movie')
 
         if not pelicula_id:
             return {"error": "Falta el ID de la película (pelicula_id)"}, 400
+
+        try:
+            pelicula_id = int(pelicula_id)
+        except (TypeError, ValueError):
+            return {"error": "El campo pelicula_id debe ser un entero"}, 400
 
         # Validaciones de integridad
         user = UserRepository.get_by_id(user_id)
         if not user:
             return {"error": "Usuario no encontrado"}, 404
 
-        movie = MovieRepository.get_by_api_id(pelicula_id) # Ojo, asumiendo que envían api_id, o si envían ID interno hay que ajustar. Si es ID interno, hay que buscar por id normal. Vamos a asumir que envían el ID interno de la BD. Si envían api_id, se debería usar get_by_api_id o crear la película antes.
-        # Vamos a requerir el ID interno de la BD para la tabla Favoritos
-        
-        # En caso de que se pase el ID interno de Peliculas:
-        # movie = MovieRepository.get_by_id(pelicula_id) - faltaría ese método.
-        # Asumamos por consistencia de la aplicación que se buscará y vinculará usando el api_id pero guardando el internal_id.
-        movie = MovieRepository.get_by_api_id(pelicula_id)
-        if not movie:
-            return {"error": f"Película con api_id {pelicula_id} no existe en la base de datos interna. Debe crearla primero."}, 404
+        movie, error_response, status = MovieService.ensure_movie_cached(pelicula_id, pelicula_data)
+        if error_response:
+            return error_response, status
 
         existing = FavoriteRepository.get_by_user_and_movie(user.id, movie.id)
         if existing:
