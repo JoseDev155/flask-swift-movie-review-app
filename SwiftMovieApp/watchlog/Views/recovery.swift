@@ -1,3 +1,5 @@
+import SwiftUI
+
 struct RecoveryView: View {
     @StateObject private var viewModel = RecoveryViewModel()
     @State private var email = ""

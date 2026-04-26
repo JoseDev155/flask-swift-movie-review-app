@@ -1,3 +1,5 @@
+import SwiftUI
+
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
     let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
